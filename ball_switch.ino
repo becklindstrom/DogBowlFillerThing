@@ -12,8 +12,8 @@ volatile unsigned long fillDuration = 0;
 
 
 //Ultrasonic Variables
-int trig_Pin = ;  //Digital
-int echo_Pin = ;  //Digital
+int trig_Pin = 11;  //Digital
+int echo_Pin = 12;  //Digital
 long sonicDuration;
 int sonicDistance;
  
@@ -21,9 +21,15 @@ void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
   pinMode(LED_Pin,OUTPUT);
+  pinMode(button_Pin,INPUT);
+ 
+ //Ultrasonic
   pinMode(trig_Pin,OUTPUT);
   pinMode(echo_Pin,INPUT);
-  pinMode(button_Pin,INPUT);
+
+  //Testing distance with Arduino LED
+  pinMode(13,OUTPUT);
+
   
 }
 
@@ -33,6 +39,20 @@ void loop() {
   level = analogRead(A0);
   Serial.println(level);
   
+ 
+ //Ultrasonic Code
+  delay(1000);
+  sonicDistance = calculateDistance();
+  Serial.print("Dog Distance: ");
+  Serial.print(sonicDistance);
+  Serial.println(" ");
+ //Turn Arduino LED off if object too close
+  if(sonicDistance < 20){
+    digitalWrite(13,LOW);
+  } else {
+    digitalWrite(13,HIGH);    
+  }
+ 
   if(level < 500){
     digitalWrite(LED_Pin, HIGH); //Turn on LED to indicate low Bowl Water Level
     bowlFill = False;
@@ -62,8 +82,8 @@ int calculateDistance(){
   digitalWrite(trig_Pin, HIGH); 
   delayMicroseconds(10);
   digitalWrite(trig_Pin, LOW);
-  sonic_Duration = pulseIn(echo_Pin, HIGH); // Reads the echoPin, returns the sound wave travel time in microseconds
-  sonicDistance= sonicDuration*0.034/2;
+  sonicDuration = pulseIn(echo_Pin, HIGH); // Reads the echoPin, returns the sound wave travel time in microseconds
+  sonicDistance = sonicDuration*0.034/2;
   return sonicDistance;
 
 }
