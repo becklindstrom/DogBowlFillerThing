@@ -14,6 +14,7 @@ const byte empty = 100;
 // fill time constants
 int filltime = 7000; //THIS IS THE USER DEFINED CONST FOR MOTOR RUN TIME [ms]
 int fillstarttime = 0;
+int currenttime = 0;
 
 //pump relay pins
 const byte RELAY_PIN = 10;
@@ -26,13 +27,7 @@ int sonicDistance;
 
 //button pin
 const byte buttonPin = 4;
-bool buttonState = LOW; 
-
-
-//tank fill logic???
-
-
-
+bool buttonState = LOW;
 
 void setup() {
   //general
@@ -71,13 +66,17 @@ void loop() {
   //check if value is higher than threshold - if yes turn on LED
   if(sonicDistance > 20){         //IF DOG NOT CLOSE
     if (value < empty){ // IF LOW
+      Serial.println("empty BEGIN");
       digitalWrite(LED_E,HIGH);
       digitalWrite(LED_F,LOW);
       fillstarttime = millis();
-      while ((fillstarttime > (filltime + fillstarttime)) && (value < empty)){
+      while ((currenttime > (filltime + fillstarttime)) && (value < empty)){
+        Serial.println("empty IN WHILE LOOP");
         digitalWrite(RELAY_PIN,HIGH);
         value = analogRead(SIGNAL_PIN);
+        currenttime = millis();     
       }
+      Serial.println("empty AFTER WHILE LOOP");
       if(value <= full){
         while (!(debounceButton(buttonState) == HIGH && buttonState == LOW)){
           buttonState = HIGH;
