@@ -12,7 +12,7 @@ const byte full = 120;
 const byte empty = 100;
 
 // fill time constants
-int filltime = 15000; //THIS IS THE USER DEFINED CONST FOR MOTOR RUN TIME [ms]
+int filltime = 7000; //THIS IS THE USER DEFINED CONST FOR MOTOR RUN TIME [ms]
 int fillstarttime = 0;
 
 //pump relay pins
@@ -26,6 +26,7 @@ int sonicDistance;
 
 //button pin
 const byte buttonPin = 4;
+bool buttonState = LOW; 
 
 
 //tank fill logic???
@@ -73,11 +74,11 @@ void loop() {
       digitalWrite(LED_E,HIGH);
       digitalWrite(LED_F,LOW);
       fillstarttime = millis();
-      while ((currentfilltime > (filltime + fillstarttime)) && (value < empty)){
+      while ((fillstarttime > (filltime + fillstarttime)) && (value < empty)){
         digitalWrite(RELAY_PIN,HIGH);
         value = analogRead(SIGNAL_PIN);
       }
-      if(value =< full){
+      if(value <= full){
         while (!(debounceButton(buttonState) == HIGH && buttonState == LOW)){
           buttonState = HIGH;
         } 
@@ -87,7 +88,7 @@ void loop() {
     } else if (value > full) {
       digitalWrite(LED_E,LOW);
       digitalWrite(RELAY_PIN,LOW);
-     digitalWrite(LED_F,HIGH)
+      digitalWrite(LED_F,HIGH);
       //Serial.println("FULL");
       
     } else {
