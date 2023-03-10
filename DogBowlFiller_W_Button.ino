@@ -39,7 +39,7 @@ void setup() {
 
   //water level
   pinMode(POWER_PIN, OUTPUT); 
-  digitalWrite(POWER_PIN, LOW);
+  digitalWrite(POWER_PIN, HIGH);
   pinMode(LED_E, OUTPUT); 
   pinMode(LED_F, OUTPUT); 
 
@@ -54,9 +54,9 @@ void setup() {
 void loop() {
   //turn on water level sensor, check value and turn off
   digitalWrite(POWER_PIN, HIGH);
-  delay(10);
+  //delay(10);
   value = analogRead(SIGNAL_PIN);
-  digitalWrite(POWER_PIN, LOW);
+  //digitalWrite(POWER_PIN, LOW);
 
   //ultrasonic interupt
   sonicDistance = calculateDistance();
@@ -70,9 +70,10 @@ void loop() {
       digitalWrite(LED_E,HIGH);
       digitalWrite(LED_F,LOW);
       fillstarttime = millis();
-      while ((currenttime > (filltime + fillstarttime)) && (value < empty)){
+      while ((currenttime < (filltime + fillstarttime)) && (value < empty)){
         Serial.println("empty IN WHILE LOOP");
         digitalWrite(RELAY_PIN,HIGH);
+
         value = analogRead(SIGNAL_PIN);
         currenttime = millis();     
       }
@@ -82,7 +83,7 @@ void loop() {
           buttonState = HIGH;
         } 
       }
-      //Serial.println("LOW");
+      Serial.println("empty END");
 
     } else if (value > full) {
       digitalWrite(LED_E,LOW);
