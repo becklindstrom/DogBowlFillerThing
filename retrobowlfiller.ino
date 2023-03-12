@@ -12,12 +12,10 @@ const byte empty = 130;
 const byte RELAY_PIN = 10;
 
 //ultrasonic pins
-int trig_Pin = 11;  //Digital
-int echo_Pin = 12;  //Digital
+int trig_Pin = 11;
+int echo_Pin = 12;
 long sonicDuration;
 int sonicDistance;
-
-
 
 
 void setup() {
@@ -25,20 +23,18 @@ void setup() {
   //general
   Serial.begin(9600);
 
-//water pump
- pinMode(RELAY_PIN, OUTPUT); 
-digitalWrite(RELAY_PIN, LOW);  
+  //water pump
+  pinMode(RELAY_PIN, OUTPUT); 
+  digitalWrite(RELAY_PIN, LOW);  
 
-//water level
-
-
+  //water level
   pinMode(POWER_PIN, OUTPUT); 
   digitalWrite(POWER_PIN, LOW);
   pinMode(LED_E, OUTPUT); 
   pinMode(LED_F, OUTPUT); 
 
   //ultrasonic
-   pinMode(trig_Pin,OUTPUT);
+  pinMode(trig_Pin,OUTPUT);
   pinMode(echo_Pin,INPUT);
 }
 
@@ -49,44 +45,42 @@ void loop() {
   value = analogRead(SIGNAL_PIN);
   digitalWrite(POWER_PIN, LOW);
   
-
+  //Create csv output for graphs
   Serial.print(millis());
   Serial.print(", ");
   Serial.print(value);
   Serial.print(", ");
   Serial.println(sonicDistance);
 
-//ultrasonic interupt
- sonicDistance = calculateDistance();
- //Serial.println(sonicDistance);
-//water pump interrupt
+  //ultrasonic interupt
+  sonicDistance = calculateDistance();
  
   //check if value is higher than threshold - if yes turn on LED
   if(sonicDistance > 20){
-  if (value < empty){ // IF LOW
-    digitalWrite(LED_E,HIGH);
-    digitalWrite(LED_F,LOW);
-digitalWrite(RELAY_PIN,HIGH);
-    //Serial.println("LOW");
+    
+    if (value < empty){ // IF LOW
+      digitalWrite(LED_E,HIGH);
+      digitalWrite(LED_F,LOW);
+      digitalWrite(RELAY_PIN,HIGH);
+      
+    } else if (value > full) {
+      digitalWrite(LED_E,LOW);
+      digitalWrite(RELAY_PIN,LOW);
+      digitalWrite(LED_F,HIGH);
 
-  } else if (value > full) {
-    digitalWrite(LED_E,LOW);
-    digitalWrite(RELAY_PIN,LOW);
-    digitalWrite(LED_F,HIGH);
+    } else {
+      digitalWrite(LED_E,LOW);
+      digitalWrite(LED_F,LOW);
+    }
 
-    //Serial.println("FULL");
-  } else {
-    digitalWrite(LED_E,LOW);
-    digitalWrite(LED_F,LOW);
-    //Serial.println(value);
-  }
-
-  delay(100);
-  }else
-{
+    delay(100);
+    
+  }else{
   digitalWrite(RELAY_PIN,LOW);
 }
 }
+
+//Function to convert ultrasonic duration to distance
 int calculateDistance(){ 
   
   digitalWrite(trig_Pin, LOW); 
